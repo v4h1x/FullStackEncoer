@@ -1,0 +1,9 @@
+{
+    "private": true,
+    "name": "project0",
+    "workspaces": [
+        "api",
+        "client"
+    ],
+    "packageManager": "yarn@3.2.1"
+}

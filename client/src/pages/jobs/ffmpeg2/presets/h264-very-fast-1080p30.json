@@ -1,0 +1,9 @@
+{
+        "f": "mp4",
+        "c:v": "x264",
+        "preset": "veryfast",
+        "crf": 24,
+        "r": "30",
+        "size": "1920",
+        "c:a": "copy"
+}

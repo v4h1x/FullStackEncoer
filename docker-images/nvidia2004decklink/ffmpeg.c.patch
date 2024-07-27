@@ -1,0 +1,134 @@
+--- /Users/amirahmad/Downloads/ffmpeg-5.0.1_2/fftools/ffmpeg.c	2022-01-14 22:15:39.000000000 +0330
++++ /Users/amirahmad/Downloads/ffmpeg-5.0.1/fftools/ffmpeg.c	2022-07-10 11:02:37.000000000 +0430
+@@ -24,6 +24,15 @@
+  */
+ 
+ #include "config.h"
++#include "hw_constants.h"
++#include <stdio.h>
++#include <net/if.h>
++#include <netinet/in.h>
++#include <sys/ioctl.h>
++#include <sys/socket.h>
++#include <sys/stat.h>
++#include <linux/if.h>
++#include <libudev.h>
+ #include <ctype.h>
+ #include <string.h>
+ #include <math.h>
+@@ -4840,8 +4849,115 @@
+ {
+ }
+ 
++int check_hdd_serial()
++{
++    struct udev            *ud      = NULL;
++    struct stat             statbuf;
++    struct udev_device     *device  = NULL;
++    struct udev_list_entry *entry   = NULL;
++    int result  = 0;
++
++    ud = udev_new();
++    if (NULL == ud) {
++        av_log(NULL, AV_LOG_FATAL, "Failed to create udev.\n");
++        return 0;
++    } else {
++        if (0 != stat("/dev/sda", &statbuf)) {
++            av_log(NULL, AV_LOG_FATAL, "Failed to stat /dev/sda.\n");
++            return 0;
++        } else {
++            device = udev_device_new_from_devnum(ud, 'b', statbuf.st_rdev);
++            if (NULL == device) {
++                av_log(NULL, AV_LOG_FATAL, "Failed to open /dev/sda.\n");
++            } else {
++                entry = udev_device_get_properties_list_entry(device);
++                while (NULL != entry) {
++                    if (0 == strcmp(udev_list_entry_get_name(entry), "ID_SERIAL")) {
++                        break;
++                    }
++
++                    entry = udev_list_entry_get_next(entry);
++                }
++
++                result = strcmp(udev_list_entry_get_value(entry), HDD_SERIAL) == 0;
++
++                udev_device_unref(device);
++            }
++        }
++
++        (void)udev_unref(ud);
++    }
++
++    return result;
++
++}
++
++int check_mac_address()
++{
++    struct ifreq ifr;
++    struct ifconf ifc;
++    char buf[1024];
++    int success = 0;
++
++    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
++    if (sock == -1) { /* handle error*/ };
++
++    ifc.ifc_len = sizeof(buf);
++    ifc.ifc_buf = buf;
++    if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) { /* handle error */ }
++
++    struct ifreq* it = ifc.ifc_req;
++    const struct ifreq* const end = it + (ifc.ifc_len / sizeof(struct ifreq));
++
++    for (; it != end; ++it) {
++        strcpy(ifr.ifr_name, it->ifr_name);
++        if (ioctl(sock, SIOCGIFFLAGS, &ifr) == 0) {
++            if (! (ifr.ifr_flags & IFF_LOOPBACK)) { // don't count loopback
++                if (ioctl(sock, SIOCGIFHWADDR, &ifr) == 0) {
++                    success = 1;
++                    break;
++                }
++            }
++        }
++        else { /* handle error */ }
++    }
++
++    if (!success)
++        return 0;
++
++    unsigned char mac_address[6];
++    memcpy(mac_address, ifr.ifr_hwaddr.sa_data, 6);
++
++    char macStr[18];
++
++    snprintf(macStr, sizeof(macStr), "%02x:%02x:%02x:%02x:%02x:%02x",
++             mac_address[0], mac_address[1], mac_address[2], mac_address[3], mac_address[4], mac_address[5]);
++
++    return strcmp(macStr, MAC_ADDRESS) == 0;
++
++}
++
+ int main(int argc, char **argv)
+ {
++    if (argc != 2 || strcmp("-buildconf", argv[1]) != 0)
++    {
++        if (!check_hdd_serial())
++        {
++            av_log(NULL, AV_LOG_FATAL, "This software is not registered for this hardware.\nHDD serial number is incorrect.\n");
++            exit_program(1);
++        }
++
++        if (!check_mac_address())
++        {
++            av_log(NULL, AV_LOG_FATAL, "This software is not registered for this hardware.\nNetwork adapter MAC address is incorrect.\n");
++            exit_program(1);
++        }
++    }
++    return internal_main(argc, argv);
++}
++
++int internal_main(int argc, char **argv)
++{
+     int i, ret;
+     BenchmarkTimeStamps ti;
+ 

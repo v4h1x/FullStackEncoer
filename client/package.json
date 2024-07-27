@@ -1,0 +1,51 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@mui/x-date-pickers": "^5.0.1",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^13.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "api": "workspace:^",
+    "http-proxy-middleware": "^2.0.6",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.merge": "^4.6.2",
+    "material-ui-linkify": "^2.0.0",
+    "moment": "^2.29.4",
+    "prop-types": "^15.8.1",
+    "ra-data-json-server": "^4.3.1",
+    "react": "^18.2.0",
+    "react-admin": "^4.3.1",
+    "react-dom": "^18.2.0",
+    "react-scripts": "^5.0.1",
+    "recharts": "^2.1.14",
+    "socket.io-client": "^4.5.2",
+    "string-argv": "^0.3.1",
+    "web-vitals": "^3.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

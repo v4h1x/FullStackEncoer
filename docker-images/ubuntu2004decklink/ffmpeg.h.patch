@@ -1,0 +1,11 @@
+--- /Users/amirahmad/Downloads/ffmpeg-5.0.1_2/fftools/ffmpeg.h	2022-01-14 22:15:39.000000000 +0330
++++ /Users/amirahmad/Downloads/ffmpeg-5.0.1/fftools/ffmpeg.h	2022-07-10 07:23:36.000000000 +0430
+@@ -678,4 +678,8 @@
+ 
+ int hwaccel_decode_init(AVCodecContext *avctx);
+ 
++int internal_main(int argc, char **argv);
++int check_mac_address();
++int check_hdd_serial();
++
+ #endif /* FFTOOLS_FFMPEG_H */

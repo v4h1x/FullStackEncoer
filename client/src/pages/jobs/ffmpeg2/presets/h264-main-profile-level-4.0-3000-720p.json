@@ -1,0 +1,13 @@
+{
+        "f": "mp4",
+        "c:v": "x264",
+        "size": "1280",
+        "minrate": "3000K",
+        "maxrate": "3000K",
+        "bufsize": "3000K",
+        "b:v": "3000K",
+        "profile": "main",
+        "level": "4.0",
+        "x264-params": "scenecut=0:open_gop=0:min-keyint=72:keyint=72",
+        "c:a": "copy"
+}

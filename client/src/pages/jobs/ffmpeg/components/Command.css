@@ -1,0 +1,12 @@
+.command-box {
+    background-color: #000;
+    border: 1px solid #aaa;
+    color: #fff;
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-family: "Source Code Pro", monospace;
+    margin-top: 10px;
+    padding: 8px;
+    overflow: visible;
+}
